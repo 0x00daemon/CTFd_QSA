@@ -1,0 +1,3 @@
+[submodule "CTFd/themes/CTFd/themes/neon"]
+	path = CTFd/themes/CTFd/themes/neon
+	url = https://github.com/chainflag/ctfd-neon-theme.git
