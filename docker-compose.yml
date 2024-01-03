@@ -30,22 +30,6 @@ services:
             ipv4_address: 172.1.0.2
     mem_limit: 450M
 
-  nginx:
-    image: nginx:stable
-    restart: always
-    volumes:
-      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - ctfd
-    networks:
-        default:
-        internal:
-    mem_limit: 450M
 
   db:
     image: mariadb:10.4.12
