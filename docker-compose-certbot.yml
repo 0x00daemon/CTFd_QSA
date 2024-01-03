@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:stable
+    restart: always
+    volumes:
+      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - default
+      - internal
+    mem_limit: 450M
+
   certbot:
     image: certbot/certbot
     container_name: certbot
@@ -8,3 +23,6 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot --force-renewal --email 9muhammadsaleh@gmail.com -d xdaem0n.com --agree-tos
+
+networks:
+  internal:
