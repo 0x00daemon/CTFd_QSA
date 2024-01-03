@@ -40,6 +40,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    depends_on:
+      - ctfd
     networks:
       default:
       internal:
@@ -51,6 +53,8 @@ services:
     volumes: 
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
     command: certonly --webroot -w /var/www/certbot --force-renewal --email 9muhammadsaleh@gmail.com -d xdaem0n.com --agree-tos
 
   db:
