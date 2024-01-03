@@ -24,12 +24,34 @@ services:
     depends_on:
       - db
     networks:
-        default:
-        internal:
-        frp:
-            ipv4_address: 172.1.0.2
+      default:
+      internal:
+      frp:
+        ipv4_address: 172.1.0.2
     mem_limit: 450M
 
+  nginx:
+    image: nginx:stable
+    restart: always
+    volumes:
+      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      default:
+      internal:
+    mem_limit: 450M
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes: 
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email 9muhammadsaleh@gmail.com -d xdaem0n.com --agree-tos
 
   db:
     image: mariadb:10.4.12
@@ -42,7 +64,7 @@ services:
     volumes:
       - .data/mysql:/var/lib/mysql
     networks:
-        internal:
+      internal:
     # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
     mem_limit: 450M
@@ -51,9 +73,9 @@ services:
     image: redis:4
     restart: always
     volumes:
-    - .data/redis:/data
+      - .data/redis:/data
     networks:
-        internal:
+      internal:
     mem_limit: 450M
   
   frps:
@@ -62,16 +84,16 @@ services:
     volumes:
       - ./frps:/conf/
     entrypoint:
-        - /usr/local/bin/frps
-        - -c
-        - /conf/frps.ini
+      - /usr/local/bin/frps
+      - -c
+      - /conf/frps.ini
     ports:
       - "10000-10100:10000-10100"
       - "6490:6490"
     networks:
-        frp:
-          ipv4_address: 172.1.0.4
-        default:
+      frp:
+        ipv4_address: 172.1.0.4
+      default:
 
   frpc:    
     image: glzjin/frp:latest
@@ -79,29 +101,29 @@ services:
     volumes:
       - ./frpc:/conf/
     entrypoint:
-        - /usr/local/bin/frpc
-        - -c
-        - /conf/frpc.ini
+      - /usr/local/bin/frpc
+      - -c
+      - /conf/frpc.ini
     networks:
-        frp:
-            ipv4_address: 172.1.0.3
-        frp-containers:
+      frp:
+        ipv4_address: 172.1.0.3
+      frp-containers:
     mem_limit: 250M
 
 networks:
-    default:
-    internal:
-        internal: true
-    frp:
-        attachable: true
-        driver: bridge
-        ipam:
-            config:
-                - subnet: 172.1.0.0/16
-    frp-containers:
-        driver: overlay
-        internal: false
-        attachable: true
-        ipam:
-            config:
-                - subnet: 172.2.0.0/16
+  default:
+  internal:
+    internal: true
+  frp:
+    attachable: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.1.0.0/16
+  frp-containers:
+    driver: overlay
+    internal: false
+    attachable: true
+    ipam:
+      config:
+        - subnet: 172.2.0.0/16
