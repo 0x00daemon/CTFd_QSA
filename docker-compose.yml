@@ -71,7 +71,7 @@ services:
     networks:
       internal:
     mem_limit: 450M
-  
+
   frps:
     image: glzjin/frp:latest
     restart: always
@@ -89,7 +89,7 @@ services:
         ipv4_address: 172.1.0.4
       default:
 
-  frpc:    
+  frpc:
     image: glzjin/frp:latest
     restart: always
     volumes:
